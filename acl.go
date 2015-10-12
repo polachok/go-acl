@@ -3,6 +3,7 @@ package acl
 // #include <sys/acl.h>
 // #cgo LDFLAGS: -lacl
 import "C"
+import "unsafe"
 
 type ACL struct {
 	ptr C.acl_t
@@ -27,6 +28,10 @@ func NewFromString(s string) (self *ACL, e error) {
 	}
 	self = &ACL{ ptr: ptr }
 	return self, nil
+}
+
+func Free(this *ACL) {
+    C.acl_free(unsafe.Pointer(this.ptr))
 }
 
 func (self *ACL) SetFile(path string, typ Type) (error) {
